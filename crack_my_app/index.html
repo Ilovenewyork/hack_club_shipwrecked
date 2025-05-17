@@ -169,7 +169,7 @@
         show(5);
       };
       // Copy & share
-      document.getElementById('copy-score').onclick=async()=>{const el=document.getElementById('result-card');try{const c=await html2canvas(el);c.toBlob(b=>navigator.clipboard.write([new ClipboardItem({'image/png':b})]));alert('Copied!')}catch{alert('Copy failed');}};
+      // document.getElementById('copy-score').onclick=async()=>{const el=document.getElementById('result-card');try{const c=await html2canvas(el);c.toBlob(b=>navigator.clipboard.write([new ClipboardItem({'image/png':b})]));alert('Copied!')}catch{alert('Copy failed');}};
       document.getElementById('share-score').onclick=()=>{const t=document.getElementById('final-score').textContent;if(navigator.share)navigator.share({title:'Roasted Score',text:t,url:BASE_URL});else navigator.clipboard.writeText(t+' — '+BASE_URL)};
     });
   </script>
