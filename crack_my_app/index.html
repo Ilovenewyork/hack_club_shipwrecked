@@ -149,19 +149,34 @@
         ecs.forEach(ec => score += Math.min(2, ec.yrs / 2) + Math.min(1, ec.hrs / 10));
         score = Math.min(10, Math.max(0, Math.round(score + (Math.random() - 0.3))));
         // Roast logic
-        const roasts = [];
-        ecs.forEach(ec => {
-          if (ec.yrs < 1) roasts.push(`🔸 ${ec.name}: only ${ec.yrs}yr—commitment issues.`);
-          else if (ec.yrs >= 3 && ec.hrs >= 10) roasts.push(`🔸 ${ec.name}: overachiever—${ec.yrs}yrs/${ec.hrs}hrs.`);
-          else if (ec.hrs < 5) roasts.push(`🔸 ${ec.name}: ${ec.hrs}hrs/wk? Netflix pro.`);
-          else roasts.push(`🔸 ${ec.name}: solid ${ec.yrs}yrs/${ec.hrs}hrs.`);
-        });
-        if (gpa < 3) roasts.push(`⚠️ GPA ${gpa}? safety haunt.`);
-        else if (gpa < 3.7) roasts.push(`⚠️ GPA ${gpa}? B-stream.`);
-        else roasts.push(`✅ GPA ${gpa}? brag mode.`);
-        roasts.push(`🎓 ${major}: ${major === 'Other' ? 'quirky pick' : 'classic choice'}.`);
-        if (fact) roasts.push(`✨ Fun fact: "${fact}".`);
-        
+        const commonECs = ecs.map(ec => ec.name.toLowerCase());
+
+        let hasVolunteering = commonECs.some(name => name.includes('volunteer') || name.includes('service'));
+        let hasLeadership = commonECs.some(name => name.includes('student government') || name.includes('captain') || name.includes('president'));
+        let hasResearch = commonECs.some(name => name.includes('research') || name.includes('internship'));
+        let hasSTEM = commonECs.some(name => name.includes('robotics') || name.includes('science') || name.includes('math') || name.includes('coding'));
+        let hasSports = commonECs.some(name => name.includes('sport') || name.includes('soccer') || name.includes('basketball'));
+
+        if (!hasVolunteering) roasts.push("🧊 No volunteering? Kindness is free, but okay.");
+        if (!hasLeadership) roasts.push("🤷‍♂️ No leadership roles? A true background character arc.");
+        if (!hasResearch && major.toLowerCase().includes('science')) roasts.push("🔬 Wants to do science but forgot the science part.");
+        if (!hasSports) roasts.push("💪 Not an athlete? Not even intramurals?");
+
+        if (gpa > 3.95 && ecs.length <= 2) roasts.push("📚 GPA warrior, but where are the ECs?");
+        if (gpa < 2.8) roasts.push("😬 GPA this low? You might be pioneering the uncharted safety zone.");
+
+        if (major.toLowerCase().includes('linguistics')) roasts.push("📖 Linguistics? Ah yes, the noble art of decoding sarcasm in dead dialects.");
+        if (major.toLowerCase().includes('philosophy')) roasts.push("🧠 Philosophy major: already preparing for your future as a barista.");
+        if (major.toLowerCase().includes('computer')) {
+          if (!hasSTEM) roasts.push("💻 CS major without coding ECs? Bold.");
+          else roasts.push("💻 CS major detected. Startup incoming... or maybe just debugging your parents' printer.");
+        }
+
+        if (fact.length < 3) roasts.push("🤫 No fun fact? Guess you're letting the mystery sell itself.");
+
+        // Score tweaks - be slightly harsher
+        score = Math.max(0, Math.floor(score - 1));
+
         const summary = roasts[Math.floor(Math.random() * roasts.length)] || 'Balanced profile.';
         document.getElementById('final-summary').textContent = summary;
         document.getElementById('final-score').textContent = `Score: ${score}/10`;
