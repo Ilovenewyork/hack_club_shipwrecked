@@ -1,231 +1,126 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crack My App</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Confetti Library -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-</head>
-<body class="bg-gradient-to-br from-purple-600 to-pink-400 min-h-screen flex flex-col items-center justify-center p-4">
-  <div class="bg-white bg-opacity-90 backdrop-blur-md p-8 rounded-xl shadow-lg w-full max-w-lg">
-    <div id="step-container">
-      <!-- Step 0: Title -->
-      <div class="step" id="step-0">
-        <h1 class="text-4xl font-extrabold text-center mb-4">Crack My App</h1>
-        <p class="text-center italic mb-6">Get your college app roasted in seconds.</p>
-        <button id="start" class="w-full py-3 bg-red-600 text-white font-bold rounded-md hover:bg-red-700">Start Roast →</button>
-      </div>
-      <!-- Step 1: ECs -->
-      <div class="step hidden" id="step-1">
-        <h2 class="text-2xl font-bold mb-4 text-center">Step 1: Your ECs</h2>
-        <div id="ecs-list" class="space-y-4"></div>
-        <button id="add-ec" class="mt-2 text-blue-600 hover:underline">+ Add another EC</button>
-        <div class="flex justify-between mt-6">
-          <button id="back-1" class="px-4 py-2 bg-gray-300 rounded-md">← Back</button>
-          <button id="next-1" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Next →</button>
-        </div>
-      </div>
-      <!-- Step 2: GPA -->
-      <div class="step hidden" id="step-2">
-        <h2 class="text-2xl font-bold mb-4 text-center">Step 2: GPA</h2>
-        <input type="number" id="gpa-input" step="0.01" min="0" max="4" placeholder="e.g. 3.85" class="w-full p-2 border border-gray-300 rounded-md mb-6" />
-        <div class="flex justify-between">
-          <button id="back-2" class="px-4 py-2 bg-gray-300 rounded-md">← Back</button>
-          <button id="next-2" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Next →</button>
-        </div>
-      </div>
-      <!-- Step 3: Major -->
-      <div class="step hidden" id="step-3">
-        <h2 class="text-2xl font-bold mb-4 text-center">Step 3: Intended Major</h2>
-        <input list="major-list" id="major-input" class="w-full p-2 border border-gray-300 rounded-md mb-6" placeholder="Select or type Major (e.g. Computer Science)" />
-        <datalist id="major-list">
-          <option>Computer Science</option><option>Biology</option><option>Economics</option>
-          <option>Physics</option><option>Linguistics</option><option>Mathematics</option>
-          <option>Chemistry</option><option>Psychology</option><option>Political Science</option>
-          <option>History</option><option>English</option><option>Engineering</option>
-          <option>Environmental Science</option><option>Art</option><option>Music</option>
-          <option>Philosophy</option><option>Sociology</option><option>Other</option>
-        </datalist>
-        <div class="flex justify-between">
-          <button id="back-3" class="px-4 py-2 bg-gray-300 rounded-md">← Back</button>
-          <button id="next-3" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Next →</button>
-        </div>
-      </div>
-      <!-- Step 4: Fun Fact -->
-      <div class="step hidden" id="step-4">
-        <h2 class="text-2xl font-bold mb-4 text-center">Step 4: Fun Fact</h2>
-        <input type="text" id="fact-input" placeholder="e.g. Built a robot that folds laundry" class="w-full p-2 border border-gray-300 rounded-md mb-6" />
-        <div class="flex justify-between">
-          <button id="back-4" class="px-4 py-2 bg-gray-300 rounded-md">← Back</button>
-          <button id="next-4" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Get Roast →</button>
-        </div>
-      </div>
-      <!-- Step 5: Result -->
-      <div class="step hidden" id="step-5">
-        <h2 class="text-2xl font-bold mb-4 text-center">Your Roasted Score</h2>
-        <div id="result-card" class="bg-gray-100 p-4 rounded-md">
-          <p class="text-3xl font-bold mb-2 text-center" id="final-summary"></p>
-          <p class="text-xl mb-4 text-center" id="final-score"></p>
-        </div>
-        <div class="flex space-x-4">
-          <button id="copy-score" class="flex-1 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Copy Score</button>
-          <button id="share-score" class="flex-1 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Share Score</button>
-        </div>
-      </div>
-        <button id="copy-result" class="mt-6 w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Copy & Share</button>
-      </div>
-    </div>
-    <footer class="mt-6 text-center text-sm text-gray-600">Made by Madhavendra Thakur ❤️</footer>
-  </div>
-  <datalist id="ec-list">
-    <option>Robotics</option><option>Debate</option><option>Volunteering</option>
-    <option>Sports</option><option>Music</option><option>Art</option><option>Theater</option>
-    <option>Coding Club</option><option>Science Olympiad</option><option>Math Team</option>
-    <option>Model UN</option><option>Community Service</option><option>Yearbook</option>
-    <option>Student Government</option><option>Research</option><option>Internship</option>
-    <option>Tutoring</option><option>Newspaper</option><option>Business Club</option>
-    <option>Environmental Club</option><option>Other</option>
-  </datalist>
-  <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      const BASE_URL = 'https://crackmyapp.netlify.app/crack_my_app/';
-      const steps = Array.from(document.querySelectorAll('.step'));
-      const show = i => steps.forEach((s, j) => j === i ? s.classList.remove('hidden') : s.classList.add('hidden'));
-      show(0);
+// Repaired script section
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const BASE_URL = 'https://crackmyapp.netlify.app/crack_my_app/';
+    const steps = Array.from(document.querySelectorAll('.step'));
+    const show = i => steps.forEach((s, j) => j === i ? s.classList.remove('hidden') : s.classList.add('hidden'));
+    show(0);
 
-      document.getElementById('start').addEventListener('click', () => show(1));
-      document.getElementById('back-1').addEventListener('click', () => show(0));
+    const roasts = [];
+    const ecsList = document.getElementById('ecs-list');
 
-      // EC management
-      const ecsList = document.getElementById('ecs-list');
-      function addEc() {
-        const div = document.createElement('div');
-        div.className = 'ec-card flex flex-col bg-gray-50 border border-gray-200 p-4 rounded-md';
-        div.innerHTML = `
-          <div class="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0 items-center">
-            <input list="ec-list" class="ec-name w-full sm:flex-1 p-2 border border-gray-300 rounded-md" placeholder="Select or type EC" />
-            <input type="number" class="ec-years w-full sm:w-20 p-2 border border-gray-300 rounded-md" placeholder="yrs" min="0" max="10" />
-            <input type="number" class="ec-hours w-full sm:w-20 p-2 border border-gray-300 rounded-md" placeholder="hrs/wk" min="0" max="168" />
-          </div>`;
-        ecsList.appendChild(div);
+    function addEc() {
+      const div = document.createElement('div');
+      div.className = 'ec-card flex flex-col bg-gray-50 border border-gray-200 p-4 rounded-md';
+      div.innerHTML = `
+        <div class="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0 items-center">
+          <input list="ec-list" class="ec-name w-full sm:flex-1 p-2 border border-gray-300 rounded-md" placeholder="Select or type EC" />
+          <input type="number" class="ec-years w-full sm:w-20 p-2 border border-gray-300 rounded-md" placeholder="yrs" min="0" max="10" />
+          <input type="number" class="ec-hours w-full sm:w-20 p-2 border border-gray-300 rounded-md" placeholder="hrs/wk" min="0" max="168" />
+        </div>`;
+      ecsList.appendChild(div);
+    }
+    addEc();
+    document.getElementById('add-ec').onclick = e => { e.preventDefault(); addEc(); };
+
+    document.getElementById('start').onclick = () => show(1);
+    document.getElementById('back-1').onclick = () => show(0);
+    document.getElementById('next-1').onclick = () => {
+      const ecs = Array.from(document.querySelectorAll('.ec-name')).map(input => input.value.trim());
+      if (ecs.some(n => !n)) return alert('Fill out all EC names.');
+      show(2);
+    };
+    document.getElementById('back-2').onclick = () => show(1);
+    document.getElementById('next-2').onclick = () => {
+      const gpa = document.getElementById('gpa-input').value.trim();
+      if (!gpa) return alert('Please enter GPA.');
+      show(3);
+    };
+    document.getElementById('back-3').onclick = () => show(2);
+    document.getElementById('next-3').onclick = () => {
+      const major = document.getElementById('major-input').value.trim();
+      if (!major) return alert('Please enter major.');
+      show(4);
+    };
+    document.getElementById('back-4').onclick = () => show(3);
+
+    document.getElementById('next-4').onclick = () => {
+      const ecs = Array.from(document.querySelectorAll('.ec-card')).map(card => ({
+        name: card.querySelector('.ec-name').value.trim(),
+        yrs: parseInt(card.querySelector('.ec-years').value) || 0,
+        hrs: parseInt(card.querySelector('.ec-hours').value) || 0
+      }));
+      const gpa = parseFloat(document.getElementById('gpa-input').value) || 0;
+      const major = document.getElementById('major-input').value.trim() || 'Unknown';
+      const fact = document.getElementById('fact-input').value.trim() || '';
+
+      let score = gpa;
+      ecs.forEach(ec => score += Math.min(2, ec.yrs / 2) + Math.min(1, ec.hrs / 10));
+      score = Math.min(10, Math.max(0, Math.round(score + (Math.random() - 0.3))));
+
+      const commonECs = ecs.map(ec => ec.name.toLowerCase());
+      const hasVolunteering = commonECs.some(name => name.includes('volunteer') || name.includes('service'));
+      const hasLeadership = commonECs.some(name => name.includes('student government') || name.includes('captain') || name.includes('president'));
+      const hasResearch = commonECs.some(name => name.includes('research') || name.includes('internship'));
+      const hasSTEM = commonECs.some(name => name.includes('robotics') || name.includes('science') || name.includes('math') || name.includes('coding'));
+      const hasSports = commonECs.some(name => name.includes('sport') || name.includes('soccer') || name.includes('basketball'));
+
+      if (!hasVolunteering) roasts.push("🧊 No volunteering? Kindness is free, but okay.");
+      if (!hasLeadership) roasts.push("🤷‍♂️ No leadership roles? A true background character arc.");
+      if (!hasResearch && major.toLowerCase().includes('science')) roasts.push("🔬 Wants to do science but forgot the science part.");
+      if (!hasSports) roasts.push("💪 Not an athlete? Not even intramurals?");
+      if (gpa > 3.95 && ecs.length <= 2) roasts.push("📚 GPA warrior, but where are the ECs?");
+      if (gpa < 2.8) roasts.push("😬 GPA this low? You might be pioneering the uncharted safety zone.");
+      if (major.toLowerCase().includes('linguistics')) roasts.push("📖 Linguistics? Ah yes, the noble art of decoding sarcasm in dead dialects.");
+      if (major.toLowerCase().includes('philosophy')) roasts.push("🧠 Philosophy major: already preparing for your future as a barista.");
+      if (major.toLowerCase().includes('computer')) {
+        if (!hasSTEM) roasts.push("💻 CS major without coding ECs? Bold.");
+        else roasts.push("💻 CS major detected. Startup incoming... or maybe just debugging your parents' printer.");
       }
-      document.getElementById('add-ec').addEventListener('click', e => { e.preventDefault(); addEc(); });
-      addEc();
+      if (fact.length < 3) roasts.push("🤫 No fun fact? Guess you're letting the mystery sell itself.");
+      score = Math.max(0, Math.floor(score - 1));
 
-      document.getElementById('next-1').addEventListener('click', () => {
-        const ecs = Array.from(document.querySelectorAll('.ec-card')).map(card => card.querySelector('.ec-name').value.trim());
-        if (ecs.some(n => !n)) return alert('Fill out all EC names.');
-        show(2);
-      });
+      const summary = roasts[Math.floor(Math.random() * roasts.length)] || 'Balanced profile.';
+      document.getElementById('final-summary').textContent = summary;
+      document.getElementById('final-score').textContent = `Score: ${score}/10`;
 
-      document.getElementById('back-2').addEventListener('click', () => show(1));
-      document.getElementById('next-2').addEventListener('click', () => {
-        const gpa = document.getElementById('gpa-input').value.trim();
-        if (!gpa) return alert('Please enter GPA.');
-        show(3);
-      });
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      show(5);
+    };
 
-      document.getElementById('back-3').addEventListener('click', () => show(2));
-      document.getElementById('next-3').addEventListener('click', () => {
-        const major = document.getElementById('major-input').value.trim();
-        if (!major) return alert('Please enter major.');
-        show(4);
-      });
+    document.getElementById('copy-score').addEventListener('click', async () => {
+      const scoreText = document.getElementById('final-score').textContent;
+      const tagLine = `I played CrackMyApp and got ${scoreText}! Can you beat my score? 😭🔥`;
+      const resultCard = document.getElementById('result-card');
+      try {
+        const canvas = await html2canvas(resultCard);
+        canvas.toBlob(blob => {
+          if (navigator.clipboard && navigator.clipboard.write) {
+            const item = new ClipboardItem({ 'image/png': blob });
+            navigator.clipboard.write([item]);
+            alert('Score image copied! You can paste it in any chat.');
+          } else {
+            alert('Clipboard image copy not supported.');
+          }
+        });
+      } catch (err) {
+        alert('Failed to copy image.');
+      }
+    });
 
-      document.getElementById('back-4').addEventListener('click', () => show(3));
-      document.getElementById('next-4').addEventListener('click', () => {
-        const ecs = Array.from(document.querySelectorAll('.ec-card')).map(card => ({
-          name: card.querySelector('.ec-name').value.trim(),
-          yrs: parseInt(card.querySelector('.ec-years').value) || 0,
-          hrs: parseInt(card.querySelector('.ec-hours').value) || 0
-        }));
-        const gpa = parseFloat(document.getElementById('gpa-input').value) || 0;
-        const major = document.getElementById('major-input').value.trim() || 'Unknown';
-        const fact = document.getElementById('fact-input').value.trim() || '';
-        // Score calculation
-        let score = gpa;
-        ecs.forEach(ec => score += Math.min(2, ec.yrs / 2) + Math.min(1, ec.hrs / 10));
-        score = Math.min(10, Math.max(0, Math.round(score + (Math.random() - 0.3))));
-        // Roast logic
-        const commonECs = ecs.map(ec => ec.name.toLowerCase());
-
-        let hasVolunteering = commonECs.some(name => name.includes('volunteer') || name.includes('service'));
-        let hasLeadership = commonECs.some(name => name.includes('student government') || name.includes('captain') || name.includes('president'));
-        let hasResearch = commonECs.some(name => name.includes('research') || name.includes('internship'));
-        let hasSTEM = commonECs.some(name => name.includes('robotics') || name.includes('science') || name.includes('math') || name.includes('coding'));
-        let hasSports = commonECs.some(name => name.includes('sport') || name.includes('soccer') || name.includes('basketball'));
-
-        if (!hasVolunteering) roasts.push("🧊 No volunteering? Kindness is free, but okay.");
-        if (!hasLeadership) roasts.push("🤷‍♂️ No leadership roles? A true background character arc.");
-        if (!hasResearch && major.toLowerCase().includes('science')) roasts.push("🔬 Wants to do science but forgot the science part.");
-        if (!hasSports) roasts.push("💪 Not an athlete? Not even intramurals?");
-
-        if (gpa > 3.95 && ecs.length <= 2) roasts.push("📚 GPA warrior, but where are the ECs?");
-        if (gpa < 2.8) roasts.push("😬 GPA this low? You might be pioneering the uncharted safety zone.");
-
-        if (major.toLowerCase().includes('linguistics')) roasts.push("📖 Linguistics? Ah yes, the noble art of decoding sarcasm in dead dialects.");
-        if (major.toLowerCase().includes('philosophy')) roasts.push("🧠 Philosophy major: already preparing for your future as a barista.");
-        if (major.toLowerCase().includes('computer')) {
-          if (!hasSTEM) roasts.push("💻 CS major without coding ECs? Bold.");
-          else roasts.push("💻 CS major detected. Startup incoming... or maybe just debugging your parents' printer.");
-        }
-
-        if (fact.length < 3) roasts.push("🤫 No fun fact? Guess you're letting the mystery sell itself.");
-
-        // Score tweaks - be slightly harsher
-        score = Math.max(0, Math.floor(score - 1));
-
-        const summary = roasts[Math.floor(Math.random() * roasts.length)] || 'Balanced profile.';
-        document.getElementById('final-summary').textContent = summary;
-        document.getElementById('final-score').textContent = `Score: ${score}/10`;
-        const det = document.getElementById('detailed-roasts');
-        det.innerHTML = '';
-        roasts.slice(0, 5).forEach(r => { const p = document.createElement('p'); p.textContent = r; det.appendChild(p); });
-        // Fire confetti
-        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-        show(5);
-      });
-
-      // Copy Score
-      document.getElementById('copy-score').addEventListener('click', async () => {
-  const scoreText = document.getElementById('final-score').textContent;
-  const tagLine = `I played CrackMyApp and got ${scoreText}! Can you beat my score? 😭🔥`;
-
-  const resultCard = document.getElementById('result-card');
-  try {
-    const canvas = await html2canvas(resultCard);
-    canvas.toBlob(blob => {
-      if (navigator.clipboard && navigator.clipboard.write) {
-        const item = new ClipboardItem({ 'image/png': blob });
-        navigator.clipboard.write([item]);
-        alert('Score image copied! You can paste it in any chat.');
+    document.getElementById('share-score').addEventListener('click', () => {
+      const score = document.getElementById('final-score').textContent;
+      const shareData = {
+        title: 'My Roasted App Score',
+        text: score,
+        url: BASE_URL
+      };
+      if (navigator.share) {
+        navigator.share(shareData).catch(() => {});
       } else {
-        alert('Clipboard image copy not supported.');
+        navigator.clipboard.writeText(`${score} — ${BASE_URL}`);
+        alert('Score copied! Use it to share.');
       }
     });
-  } catch (err) {
-    alert('Failed to copy image.');
-  }
-});
-      // Share Score (Web Share API if available)
-      document.getElementById('share-score').addEventListener('click', () => {
-        const score = document.getElementById('final-score').textContent;
-        const shareData = {
-          title: 'My Roasted App Score',
-          text: score,
-          url: BASE_URL
-        };
-        if (navigator.share) {
-          navigator.share(shareData).catch(() => {});
-        } else {
-          // fallback: copy
-          navigator.clipboard.writeText(`${score} — ${BASE_URL}`);
-          alert('Score copied! Use it to share.');
-        }
-      });
-    });
-  </script>
-</body>
-</html>
+  });
+</script>
