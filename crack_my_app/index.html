@@ -68,8 +68,12 @@
         <div id="result-card" class="bg-gray-100 p-4 rounded-md">
           <p class="text-3xl font-bold mb-2 text-center" id="final-summary"></p>
           <p class="text-xl mb-4 text-center" id="final-score"></p>
-          <div class="text-left space-y-1" id="detailed-roasts"></div>
         </div>
+        <div class="flex space-x-4">
+          <button id="copy-score" class="flex-1 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Copy Score</button>
+          <button id="share-score" class="flex-1 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Share Score</button>
+        </div>
+      </div>
         <button id="copy-result" class="mt-6 w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Copy & Share</button>
       </div>
     </div>
@@ -169,12 +173,42 @@
         show(5);
       });
 
-      document.getElementById('copy-result').addEventListener('click', () => {
-        const summary = document.getElementById('final-summary').textContent;
+      // Copy Score
+      document.getElementById('copy-score').addEventListener('click', async () => {
+  const scoreText = document.getElementById('final-score').textContent;
+  const tagLine = `I played CrackMyApp and got ${scoreText}! Can you beat my score? 😭🔥`;
+
+  const resultCard = document.getElementById('result-card');
+  try {
+    const canvas = await html2canvas(resultCard);
+    canvas.toBlob(blob => {
+      if (navigator.clipboard && navigator.clipboard.write) {
+        const item = new ClipboardItem({ 'image/png': blob });
+        navigator.clipboard.write([item]);
+        alert('Score image copied! You can paste it in any chat.');
+      } else {
+        alert('Clipboard image copy not supported.');
+      }
+    });
+  } catch (err) {
+    alert('Failed to copy image.');
+  }
+});
+      // Share Score (Web Share API if available)
+      document.getElementById('share-score').addEventListener('click', () => {
         const score = document.getElementById('final-score').textContent;
-        const tag = `${summary}, ${score} — ${BASE_URL}`;
-        navigator.clipboard.writeText(tag);
-        alert('Copied!');
+        const shareData = {
+          title: 'My Roasted App Score',
+          text: score,
+          url: BASE_URL
+        };
+        if (navigator.share) {
+          navigator.share(shareData).catch(() => {});
+        } else {
+          // fallback: copy
+          navigator.clipboard.writeText(`${score} — ${BASE_URL}`);
+          alert('Score copied! Use it to share.');
+        }
       });
     });
   </script>
