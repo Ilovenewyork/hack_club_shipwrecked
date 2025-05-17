@@ -17,27 +17,11 @@
       </div>
       <!-- Step 1: ECs -->
       <div class="step hidden" id="step-1">
-        <h2 class="text-2xl font-bold mb-4 text-center">Step 1: Top 3 ECs</h2>
+        <h2 class="text-2xl font-bold mb-4 text-center">Step 1: Your ECs</h2>
         <div id="ecs-list" class="space-y-4">
-          <template id="ec-template">
-            <div class="ec-card flex flex-col bg-gray-50 border border-gray-200 p-4 rounded-md">
-              <div class="flex space-x-2 items-center">
-                <input list="ec-list" class="ec-name flex-1 p-2 border border-gray-300 rounded-md" placeholder="Select or type EC (e.g. Robotics)" />
-                <input type="number" class="ec-years w-20 p-2 border border-gray-300 rounded-md" placeholder="yrs" min="0" max="10" />
-                <input type="number" class="ec-hours w-20 p-2 border border-gray-300 rounded-md" placeholder="hrs/wk" min="0" max="168" />
-              </div>
-            </div>
-          </template>
+          <!-- Initial EC entry -->
         </div>
-        <datalist id="ec-list">
-          <option>Robotics</option><option>Debate</option><option>Volunteering</option>
-          <option>Sports</option><option>Music</option><option>Art</option><option>Theater</option>
-          <option>Coding Club</option><option>Science Olympiad</option><option>Math Team</option>
-          <option>Model UN</option><option>Community Service</option><option>Yearbook</option>
-          <option>Student Government</option><option>Research</option><option>Internship</option>
-          <option>Tutoring</option><option>Newspaper</option><option>Business Club</option>
-          <option>Environmental Club</option><option>Other</option>
-        </datalist>
+        <button id="add-ec" class="mt-2 text-blue-600 hover:underline">+ Add another EC</button>
         <div class="flex justify-between mt-6">
           <button id="back-1" class="px-4 py-2 bg-gray-300 rounded-md">← Back</button>
           <button id="next-1" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Next →</button>
@@ -61,7 +45,7 @@
           <option>Physics</option><option>Linguistics</option><option>Mathematics</option>
           <option>Chemistry</option><option>Psychology</option><option>Political Science</option>
           <option>History</option><option>English</option><option>Engineering</option>
-          <option>Environmental Science</option><option>Music</option><option>Art</option>
+          <option>Environmental Science</option><option>Art</option><option>Music</option>
           <option>Philosophy</option><option>Sociology</option><option>Other</option>
         </datalist>
         <div class="flex justify-between">
@@ -96,71 +80,82 @@
     const steps = [...document.querySelectorAll('.step')];
     const show = i => steps.forEach((s,j)=>s.classList.toggle('hidden', j!==i));
     show(0);
-    document.getElementById('start').onclick = ()=> show(1);
-    document.getElementById('back-1').onclick = ()=> show(0);
-    document.getElementById('next-1').onclick = ()=> {
-      // Validate EC entries
-      const ecs = Array.from(document.querySelectorAll('.ec-card')).map(card=>{
+    document.getElementById('start').onclick = () => show(1);
+    document.getElementById('back-1').onclick = () => show(0);
+
+    // EC management
+    const ecsList = document.getElementById('ecs-list');
+    function addEc() {
+      const div = document.createElement('div');
+      div.className = 'ec-card flex flex-col bg-gray-50 border border-gray-200 p-4 rounded-md';
+      div.innerHTML = `
+        <div class="flex space-x-2 items-center">
+          <input list="ec-list" class="ec-name flex-1 p-2 border border-gray-300 rounded-md" placeholder="Select or type EC" />
+          <input type="number" class="ec-years w-20 p-2 border border-gray-300 rounded-md" placeholder="yrs" min="0" max="10" />
+          <input type="number" class="ec-hours w-20 p-2 border border-gray-300 rounded-md" placeholder="hrs/wk" min="0" max="168" />
+        </div>`;
+      ecsList.append(div);
+    }
+    document.getElementById('add-ec').onclick = (e) => { e.preventDefault(); addEc(); };
+    // Initialize 3
+    for(let i=0;i<3;i++) addEc();
+
+    document.getElementById('next-1').onclick = () => {
+      const ecs = Array.from(document.querySelectorAll('.ec-card')).map(card => {
         const name = card.querySelector('.ec-name').value.trim();
-        const yrs = parseInt(card.querySelector('.ec-years').value) || 0;
-        const hrs = parseInt(card.querySelector('.ec-hours').value) || 0;
-        return {name,yrs,hrs};
+        return name;
       });
-      if(ecs.some(ec=>!ec.name)) return alert('Please fill in all EC names.');
+      if(ecs.some(n => !n)) return alert('Fill out all EC names.');
       show(2);
     };
-    document.getElementById('back-2').onclick = ()=> show(1);
-    document.getElementById('next-2').onclick = ()=> {
+
+    document.getElementById('back-2').onclick = () => show(1);
+    document.getElementById('next-2').onclick = () => {
       const gpa = document.getElementById('gpa-input').value;
-      if(!gpa) return alert('Please enter your GPA.');
+      if(!gpa) return alert('Please enter GPA.');
       show(3);
     };
-    document.getElementById('back-3').onclick = ()=> show(2);
-    document.getElementById('next-3').onclick = ()=> {
+    document.getElementById('back-3').onclick = () => show(2);
+    document.getElementById('next-3').onclick = () => {
       const major = document.getElementById('major-input').value.trim();
-      if(!major) return alert('Please select or type your major.');
+      if(!major) return alert('Please enter major.');
       show(4);
     };
-    document.getElementById('back-4').onclick = ()=> show(3);
-    document.getElementById('next-4').onclick = ()=> {
-      // Gather data
-      const ecs = Array.from(document.querySelectorAll('.ec-card')).map(card=>{
-        return {
-          name: card.querySelector('.ec-name').value.trim(),
-          yrs: parseInt(card.querySelector('.ec-years').value) || 0,
-          hrs: parseInt(card.querySelector('.ec-hours').value) || 0
-        };
-      });
+    document.getElementById('back-4').onclick = () => show(3);
+    document.getElementById('next-4').onclick = () => {
+      const ecs = Array.from(document.querySelectorAll('.ec-card')).map(card => ({
+        name: card.querySelector('.ec-name').value.trim(),
+        yrs: parseInt(card.querySelector('.ec-years').value)||0,
+        hrs: parseInt(card.querySelector('.ec-hours').value)||0
+      }));
       const gpa = parseFloat(document.getElementById('gpa-input').value);
       const major = document.getElementById('major-input').value.trim();
       const fact = document.getElementById('fact-input').value.trim();
-      // Score calc
+      // Score
       let score = gpa;
-      ecs.forEach(ec=> score += Math.min(2, ec.yrs/2) + Math.min(1, ec.hrs/10));
+      ecs.forEach(ec => score += Math.min(2, ec.yrs/2) + Math.min(1, ec.hrs/10));
       score = Math.min(10, Math.max(0, Math.round(score + (Math.random()-0.3))));
-      // Roast logic
+      // Roasts
       const roasts = [];
-      ecs.forEach(ec=>{
-        if(ec.yrs<1) roasts.push(`🔸 ${ec.name}: commitment issues with just ${ec.yrs}yr.`);
-        else if(ec.yrs>=3 && ec.hrs>=10) roasts.push(`🔸 ${ec.name}: overachiever vibes—${ec.yrs}yrs at ${ec.hrs}hrs/wk.`);
-        else if(ec.hrs<5) roasts.push(`🔸 ${ec.name}: ${ec.hrs}hrs/wk? Might as well binge Netflix.`);
+      ecs.forEach(ec => {
+        if(ec.yrs<1) roasts.push(`🔸 ${ec.name}: only ${ec.yrs}yr—commitment issues.`);
+        else if(ec.yrs>=3 && ec.hrs>=10) roasts.push(`🔸 ${ec.name}: overachiever—${ec.yrs}yrs/${ec.hrs}hrs.`);
+        else if(ec.hrs<5) roasts.push(`🔸 ${ec.name}: ${ec.hrs}hrs/wk? Netflix pro.`);
         else roasts.push(`🔸 ${ec.name}: solid ${ec.yrs}yrs/${ec.hrs}hrs.`);
       });
-      if(gpa<3) roasts.push(`⚠️ GPA ${gpa}? Safety-school energy.`);
-      else if(gpa<3.7) roasts.push(`⚠️ GPA ${gpa}? B-student vibes.`);
-      else roasts.push(`✅ GPA ${gpa}? Grandma brag unlocked.`);
-      if(major && major!== 'Other') roasts.push(`🎓 ${major}: classic choice.`);
-      else roasts.push(`🎓 ${major}: quirky major alert.`);
-      if(fact) roasts.push(`✨ Fun fact: "${fact}". Humblebrag alert.`);
-      // Summary and display
-      const summary = roasts[Math.floor(Math.random()*roasts.length)] || 'Balanced profile.';
+      if(gpa<3) roasts.push(`⚠️ GPA ${gpa}? safety haunt.`);
+      else if(gpa<3.7) roasts.push(`⚠️ GPA ${gpa}? B-stream.`);
+      else roasts.push(`✅ GPA ${gpa}? brag mode.`);
+      roasts.push(major!='Other' ? `🎓 ${major}: classic.` : `🎓 ${major}: quirky pick.`);
+      if(fact) roasts.push(`✨ Fun fact: "${fact}".`);
+      const summary = roasts[Math.floor(Math.random()*roasts.length)]||'Balanced profile.';
       document.getElementById('final-summary').textContent = summary;
       document.getElementById('final-score').textContent = `Score: ${score}/10`;
-      const det = document.getElementById('detailed-roasts'); det.innerHTML = '';
-      roasts.slice(0,5).forEach(r=>{ const p = document.createElement('p'); p.textContent = r; det.append(p); });
+      const det = document.getElementById('detailed-roasts'); det.innerHTML='';
+      roasts.slice(0,5).forEach(r=>{ const p=document.createElement('p'); p.textContent=r; det.append(p); });
       show(5);
     };
-    document.getElementById('copy-result').onclick = ()=> {
+    document.getElementById('copy-result').onclick = ()=>{
       const tag = `${document.getElementById('final-summary').textContent}, ${document.getElementById('final-score').textContent} — ${BASE_URL}`;
       navigator.clipboard.writeText(tag);
       alert('Copied!');
