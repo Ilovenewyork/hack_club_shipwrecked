@@ -1,126 +1,177 @@
-// Repaired script section
-<script>
-  window.addEventListener('DOMContentLoaded', () => {
-    const BASE_URL = 'https://crackmyapp.netlify.app/crack_my_app/';
-    const steps = Array.from(document.querySelectorAll('.step'));
-    const show = i => steps.forEach((s, j) => j === i ? s.classList.remove('hidden') : s.classList.add('hidden'));
-    show(0);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crack My App</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>body { font-family: Helvetica, Arial, sans-serif; }</style>
+</head>
+<body class="bg-gradient-to-br from-purple-600 to-pink-400 min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white bg-opacity-90 backdrop-blur-md p-6 rounded-2xl shadow-lg w-full max-w-lg">
+    <div id="step-container">
+      <!-- Step 0: Intro -->
+      <div class="step" id="step-0">
+        <h1 class="text-4xl font-extrabold text-center mb-4">Crack My App</h1>
+        <p class="text-center italic mb-6">Get your college app roasted in seconds.</p>
+        <button id="start" class="w-full py-3 bg-red-600 text-white rounded-md hover:bg-red-700">Start Roast →</button>
+      </div>
+      <!-- Step 1: Activities -->
+      <div class="step hidden" id="step-1">
+        <h2 class="text-2xl font-bold text-center mb-4">Step 1: Your Activities</h2>
+        <div id="ecs-list" class="space-y-4"></div>
+        <button id="add-ec" class="mt-2 text-blue-600 hover:underline">+ Add another activity</button>
+        <div class="flex justify-between mt-6">
+          <button id="back-1" class="px-4 py-2 bg-gray-300 rounded-md">← Back</button>
+          <button id="next-1" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Next →</button>
+        </div>
+      </div>
+      <!-- Step 2: GPA -->
+      <div class="step hidden" id="step-2">
+        <h2 class="text-2xl font-bold text-center mb-4">Step 2: GPA</h2>
+        <input type="number" id="gpa-input" step="0.01" min="0" max="4" placeholder="e.g. 3.85" class="w-full p-2 border rounded-md mb-6" />
+        <div class="flex justify-between">
+          <button id="back-2" class="px-4 py-2 bg-gray-300 rounded-md">← Back</button>
+          <button id="next-2" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Next →</button>
+        </div>
+      </div>
+      <!-- Step 3: Major -->
+      <div class="step hidden" id="step-3">
+        <h2 class="text-2xl font-bold text-center mb-4">Step 3: Intended Major</h2>
+        <input list="major-list" id="major-input" class="w-full p-2 border rounded-md mb-6" placeholder="Select or type Major" />
+        <datalist id="major-list">
+          <option>Computer Science</option><option>Biology</option><option>Economics</option>
+          <option>Physics</option><option>Linguistics</option><option>Mathematics</option>
+          <option>Chemistry</option><option>Psychology</option><option>Political Science</option>
+          <option>History</option><option>English</option><option>Engineering</option>
+          <option>Environmental Science</option><option>Music</option><option>Art</option>
+          <option>Philosophy</option><option>Sociology</option><option>Other</option>
+        </datalist>
+        <div class="flex justify-between">
+          <button id="back-3" class="px-4 py-2 bg-gray-300 rounded-md">← Back</button>
+          <button id="next-3" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Next →</button>
+        </div>
+      </div>
+      <!-- Step 4: Fun Fact -->
+      <div class="step hidden" id="step-4">
+        <h2 class="text-2xl font-bold text-center mb-4">Step 4: Fun Fact</h2>
+        <input type="text" id="fact-input" placeholder="e.g. Built a robot that folds laundry" class="w-full p-2 border rounded-md mb-6" />
+        <div class="flex justify-between">
+          <button id="back-4" class="px-4 py-2 bg-gray-300 rounded-md">← Back</button>
+          <button id="next-4" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Get Roast →</button>
+        </div>
+      </div>
+      <!-- Step 5: Result -->
+      <div class="step hidden" id="step-5">
+        <h2 class="text-2xl font-bold text-center mb-4">Your Roasted Score</h2>
+        <div id="result-card" class="bg-gray-100 p-6 rounded-2xl shadow-inner">
+          <h3 class="text-center text-lg font-semibold mb-3 text-gray-700">🧠 Personality: <span id="archetype" class="italic text-gray-800"></span></h3>
+          <p id="final-score" class="text-3xl font-bold text-center mb-4"></p>
+          <ul id="final-roast-list" class="list-decimal list-inside text-gray-800 text-sm space-y-2"></ul>
+        </div>
+        <div class="flex justify-center space-x-4 mt-4">
+          <button id="copy-score" class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Copy Image</button>
+          <button id="share-score" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Share</button>
+        </div>
+      </div>
+    </div>
+    <footer class="mt-6 text-center text-sm text-gray-500">Made by Madhavendra Thakur ❤️</footer>
+  </div>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const BASE_URL = 'https://crackmyapp.netlify.app/crack_my_app/';
+      const steps = [...document.querySelectorAll('.step')];
+      const show = i => steps.forEach((s,j)=>j===i?s.classList.remove('hidden'):s.classList.add('hidden'));
+      show(0);
 
-    const roasts = [];
-    const ecsList = document.getElementById('ecs-list');
-
-    function addEc() {
-      const div = document.createElement('div');
-      div.className = 'ec-card flex flex-col bg-gray-50 border border-gray-200 p-4 rounded-md';
-      div.innerHTML = `
-        <div class="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0 items-center">
-          <input list="ec-list" class="ec-name w-full sm:flex-1 p-2 border border-gray-300 rounded-md" placeholder="Select or type EC" />
-          <input type="number" class="ec-years w-full sm:w-20 p-2 border border-gray-300 rounded-md" placeholder="yrs" min="0" max="10" />
-          <input type="number" class="ec-hours w-full sm:w-20 p-2 border border-gray-300 rounded-md" placeholder="hrs/wk" min="0" max="168" />
-        </div>`;
-      ecsList.appendChild(div);
-    }
-    addEc();
-    document.getElementById('add-ec').onclick = e => { e.preventDefault(); addEc(); };
-
-    document.getElementById('start').onclick = () => show(1);
-    document.getElementById('back-1').onclick = () => show(0);
-    document.getElementById('next-1').onclick = () => {
-      const ecs = Array.from(document.querySelectorAll('.ec-name')).map(input => input.value.trim());
-      if (ecs.some(n => !n)) return alert('Fill out all EC names.');
-      show(2);
-    };
-    document.getElementById('back-2').onclick = () => show(1);
-    document.getElementById('next-2').onclick = () => {
-      const gpa = document.getElementById('gpa-input').value.trim();
-      if (!gpa) return alert('Please enter GPA.');
-      show(3);
-    };
-    document.getElementById('back-3').onclick = () => show(2);
-    document.getElementById('next-3').onclick = () => {
-      const major = document.getElementById('major-input').value.trim();
-      if (!major) return alert('Please enter major.');
-      show(4);
-    };
-    document.getElementById('back-4').onclick = () => show(3);
-
-    document.getElementById('next-4').onclick = () => {
-      const ecs = Array.from(document.querySelectorAll('.ec-card')).map(card => ({
-        name: card.querySelector('.ec-name').value.trim(),
-        yrs: parseInt(card.querySelector('.ec-years').value) || 0,
-        hrs: parseInt(card.querySelector('.ec-hours').value) || 0
-      }));
-      const gpa = parseFloat(document.getElementById('gpa-input').value) || 0;
-      const major = document.getElementById('major-input').value.trim() || 'Unknown';
-      const fact = document.getElementById('fact-input').value.trim() || '';
-
-      let score = gpa;
-      ecs.forEach(ec => score += Math.min(2, ec.yrs / 2) + Math.min(1, ec.hrs / 10));
-      score = Math.min(10, Math.max(0, Math.round(score + (Math.random() - 0.3))));
-
-      const commonECs = ecs.map(ec => ec.name.toLowerCase());
-      const hasVolunteering = commonECs.some(name => name.includes('volunteer') || name.includes('service'));
-      const hasLeadership = commonECs.some(name => name.includes('student government') || name.includes('captain') || name.includes('president'));
-      const hasResearch = commonECs.some(name => name.includes('research') || name.includes('internship'));
-      const hasSTEM = commonECs.some(name => name.includes('robotics') || name.includes('science') || name.includes('math') || name.includes('coding'));
-      const hasSports = commonECs.some(name => name.includes('sport') || name.includes('soccer') || name.includes('basketball'));
-
-      if (!hasVolunteering) roasts.push("🧊 No volunteering? Kindness is free, but okay.");
-      if (!hasLeadership) roasts.push("🤷‍♂️ No leadership roles? A true background character arc.");
-      if (!hasResearch && major.toLowerCase().includes('science')) roasts.push("🔬 Wants to do science but forgot the science part.");
-      if (!hasSports) roasts.push("💪 Not an athlete? Not even intramurals?");
-      if (gpa > 3.95 && ecs.length <= 2) roasts.push("📚 GPA warrior, but where are the ECs?");
-      if (gpa < 2.8) roasts.push("😬 GPA this low? You might be pioneering the uncharted safety zone.");
-      if (major.toLowerCase().includes('linguistics')) roasts.push("📖 Linguistics? Ah yes, the noble art of decoding sarcasm in dead dialects.");
-      if (major.toLowerCase().includes('philosophy')) roasts.push("🧠 Philosophy major: already preparing for your future as a barista.");
-      if (major.toLowerCase().includes('computer')) {
-        if (!hasSTEM) roasts.push("💻 CS major without coding ECs? Bold.");
-        else roasts.push("💻 CS major detected. Startup incoming... or maybe just debugging your parents' printer.");
+      // Add EC entry with role and details
+      const ecsList = document.getElementById('ecs-list');
+      function addEc() {
+        const div = document.createElement('div');
+        div.className = 'ec-card flex flex-col bg-gray-50 border p-4 rounded-md overflow-x-auto';
+        div.innerHTML = `
+          <div class="flex flex-wrap flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0 items-center">
+            <input list="ec-list" class="ec-name flex-1 p-2 border rounded-md" placeholder="Activity" />
+            <select class="ec-role p-2 border rounded-md">
+              <option>Member</option><option>President</option>
+              <option>Vice President</option><option>Captain</option>
+            </select>
+            <input type="number" class="ec-years w-full sm:w-16 p-2 border rounded-md" placeholder="yrs" min="0" max="4" />
+            <input type="number" class="ec-hours w-full sm:w-16 p-2 border rounded-md" placeholder="hrs/wk" min="0" max="168" />
+          </div>`;
+        ecsList.appendChild(div);
       }
-      if (fact.length < 3) roasts.push("🤫 No fun fact? Guess you're letting the mystery sell itself.");
-      score = Math.max(0, Math.floor(score - 1));
+      addEc(); document.getElementById('add-ec').onclick=e=>{e.preventDefault();addEc();};
 
-      const summary = roasts[Math.floor(Math.random() * roasts.length)] || 'Balanced profile.';
-      document.getElementById('final-summary').textContent = summary;
-      document.getElementById('final-score').textContent = `Score: ${score}/10`;
-
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-      show(5);
-    };
-
-    document.getElementById('copy-score').addEventListener('click', async () => {
-      const scoreText = document.getElementById('final-score').textContent;
-      const tagLine = `I played CrackMyApp and got ${scoreText}! Can you beat my score? 😭🔥`;
-      const resultCard = document.getElementById('result-card');
-      try {
-        const canvas = await html2canvas(resultCard);
-        canvas.toBlob(blob => {
-          if (navigator.clipboard && navigator.clipboard.write) {
-            const item = new ClipboardItem({ 'image/png': blob });
-            navigator.clipboard.write([item]);
-            alert('Score image copied! You can paste it in any chat.');
-          } else {
-            alert('Clipboard image copy not supported.');
-          }
-        });
-      } catch (err) {
-        alert('Failed to copy image.');
-      }
-    });
-
-    document.getElementById('share-score').addEventListener('click', () => {
-      const score = document.getElementById('final-score').textContent;
-      const shareData = {
-        title: 'My Roasted App Score',
-        text: score,
-        url: BASE_URL
+      // Navigation handlers
+      document.getElementById('start').onclick=()=>show(1);
+      document.getElementById('back-1').onclick=()=>show(0);
+      document.getElementById('next-1').onclick=()=>{
+        const names=[...document.querySelectorAll('.ec-name')].map(i=>i.value.trim());
+        if(names.some(n=>!n)) return alert('Fill all activities.'); show(2);
       };
-      if (navigator.share) {
-        navigator.share(shareData).catch(() => {});
-      } else {
-        navigator.clipboard.writeText(`${score} — ${BASE_URL}`);
-        alert('Score copied! Use it to share.');
-      }
+      document.getElementById('back-2').onclick=()=>show(1);
+      document.getElementById('next-2').onclick=()=>{if(!document.getElementById('gpa-input').value) return alert('Enter GPA.'); show(3);};
+      document.getElementById('back-3').onclick=()=>show(2);
+      document.getElementById('next-3').onclick=()=>{if(!document.getElementById('major-input').value.trim()) return alert('Enter major.'); show(4);};
+      document.getElementById('back-4').onclick=()=>show(3);
+
+      document.getElementById('next-4').onclick=()=>{
+        // Collect data
+        const ecs=[...document.querySelectorAll('.ec-card')].map(c=>({
+          name:c.querySelector('.ec-name').value.trim(), role:c.querySelector('.ec-role').value,
+          yrs:parseInt(c.querySelector('.ec-years').value)||0, hrs:parseInt(c.querySelector('.ec-hours').value)||0
+        }));
+        const gpa=parseFloat(document.getElementById('gpa-input').value)||0;
+        const major=document.getElementById('major-input').value.trim()||'Unknown';
+        const fact=document.getElementById('fact-input').value.trim()||'';
+        let score=gpa; ecs.forEach(ec=>score+=Math.min(2,ec.yrs/2)+Math.min(1,ec.hrs/10)); score=Math.max(0,Math.floor(Math.min(10,score-1)));
+        const namesLower=ecs.map(ec=>ec.name.toLowerCase()); const hasVol=namesLower.some(n=>n.includes('volunteer')); const leadRoles=['President','Vice President','Captain']; const hasLead=ecs.some(ec=>leadRoles.includes(ec.role)); const heavy=ecs.some(ec=>ec.hrs>25);
+
+        // Archetype
+        let arche=''; if(score>=9) arche='The Weaponized Tryhard'; else if(score>=7) arche='The Spreadsheet Overachiever'; else if(score>=5) arche='The Mid-Tier Manifestor'; else arche='The Application Amnesiac';
+        document.getElementById('archetype').textContent=arche;
+
+        // Build roast list
+        const list=document.getElementById('final-roast-list'); list.innerHTML=''; const addItem=t=>{const li=document.createElement('li');li.textContent=t;list.appendChild(li)};
+        // GPA logic
+        if(gpa>=3.98) addItem(`GPA (${gpa}): Supreme commander of grades`);
+        else if(gpa>=3.7) addItem(`GPA (${gpa}): Top 10% but zero chill`);
+        else if(gpa>=3.3) addItem(`GPA (${gpa}): Solid effort, average spotlight`);
+        else addItem(`GPA (${gpa}): Might need to gift essay editors coffee`);
+        // ECs logic
+        ecs.forEach(ec=>{
+          let comment='';
+          if(ec.yrs<1) comment='Fresh entry, bold move';
+          else if(ec.role!=='Member') comment=`${ec.role} grind, leadership vibes`;
+          else if(ec.hrs>25) comment='Burnout central';
+          else comment='Nice participation trophy';
+          addItem(`${ec.name} (${ec.role}, ${ec.yrs}yr/${ec.hrs}hr): ${comment}`);
+        });
+        if(!hasVol) addItem('No volunteering – empathy meter flatline');
+        if(!hasLead) addItem('No lead role – background extra');
+        // Major logic
+        if(/computer/i.test(major)) addItem(`Major CS: Hacker or imposter syndrome?`);
+        else addItem(`Major ${major}: Charting well-traveled paths`);
+        // Fun fact
+        if(fact) addItem(`Fun Fact: "${fact}" – Humblebrag incoming`);
+        else addItem('Fun Fact: None – mystery or laziness?');
+        // Verdict
+        if(score>=9) addItem('Verdict: Cracked App – Ivy-tier chaos');
+        else if(score>=7) addItem('Verdict: Competitive – one typo away');
+        else if(score>=5) addItem('Verdict: Mid – prayers recommended');
+        else addItem('Verdict: Brink of regret – maybe retake emoji');
+        document.getElementById('final-score').textContent=`Score: ${score}/10`;
+        // Finalize
+        confetti({particleCount:100,spread:70,origin:{y:0.6}});
+        show(5);
+      };
+      // Copy & share
+      document.getElementById('copy-score').onclick=async()=>{const el=document.getElementById('result-card');try{const c=await html2canvas(el);c.toBlob(b=>navigator.clipboard.write([new ClipboardItem({'image/png':b})]));alert('Copied!')}catch{alert('Copy failed');}};
+      document.getElementById('share-score').onclick=()=>{const t=document.getElementById('final-score').textContent;if(navigator.share)navigator.share({title:'Roasted Score',text:t,url:BASE_URL});else navigator.clipboard.writeText(t+' — '+BASE_URL)};
     });
-  });
-</script>
+  </script>
+</body>
+</html>
